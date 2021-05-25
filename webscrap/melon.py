@@ -1,30 +1,36 @@
 from bs4 import BeautifulSoup
-from urllib.request import urlopen
+import requests
 
 
 class Melon(object):
-
     url = ''
 
-    def __str__(self):
-        return self.url
+    headers = {'User-agent': 'zzzz'}
+
+    classname = []
+
+    @staticmethod
+    def scrap(melon, classname):
+        soup = BeautifulSoup(melon.url, 'lxml')
+        count = 0
+        for i in soup.find_all(name="div", attrs={"class": classname}):
+            count += 1
+            print(f'{str(count)}위')
+            print(i.find("a").text)
 
     @staticmethod
     def main():
         melon = Melon()
         while 1:
-            m = input('0.Exit 1.Input 2.Title 3.Artist')
+            m = input('0.Exit 1.Input URL 2.Distribute Info')
             if m == '0':
                 break
             elif m == '1':
-                melon.url = input('Input URL')
+                melon.url = requests.get(input('URL 입력'), headers=melon.headers).text
             elif m == '2':
-                print(f'Input URL: {melon}')
-                soup = BeautifulSoup(urlopen(melon.url), 'lxml')
-                for link1 in soup.find_all(name='div', attrs={"span"}):
-                    print(f'NAME: {link1.find("a").text}')
+                melon.classname.append("ellipsis rank01")
+                melon.scrap(melon, melon.classname)
             else:
-                print('Wrong Number')
                 continue
 
 
