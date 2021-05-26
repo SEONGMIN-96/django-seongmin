@@ -3,36 +3,49 @@ import requests
 
 
 class Melon(object):
-    url = ''
-
-    headers = {'User-agent': 'zzzz'}
-
+    url = 'https://www.melon.com/chart/index.htm'
+    headers = {'User-agent': 'Mozilla/5.0'}
     classname = []
+    arist_list = []
+    title_list = []
+    song_dic = {}
 
-    @staticmethod
-    def scrap(melon, classname):
-        soup = BeautifulSoup(melon.url, 'lxml')
-        count = 0
-        for i in soup.find_all(name="div", attrs={"class": classname}):
-            count += 1
-            print(f'{str(count)}위')
-            print(i.find("a").text)
+    def set_url(self):
+        self.url = requests.get(self.url, headers=self.headers).text
+
+    def get_ranking(self):
+        soup = BeautifulSoup(self.url, "lxml")
+        # 가수
+        ls = soup.find_all(name="div", attrs={'class':self.classname[0]})
+        for i in ls:
+            self.arist_list.append(i.find('a').text)
+        # 노래
+        ls = soup.find_all(name="div", attrs={'class': self.classname[1]})
+        for i in ls:
+            self.title_list.append(i.find('a').text)
+
+    def print_dic(self):
+        for j in range(100):
+            self.song_dic[self.title_list[j]] = self.arist_list[j]
+        print(self.song_dic)
+
 
     @staticmethod
     def main():
         melon = Melon()
         while 1:
-            m = input('0.Exit 1.Input URL 2.Distribute Info')
-            if m == '0':
-                break
-            elif m == '1':
-                melon.url = requests.get(input('URL 입력'), headers=melon.headers).text
-            elif m == '2':
-                melon.classname.append("ellipsis rank01")
-                melon.scrap(melon, melon.classname)
+            menu = input('0.break 1.Input 2.Output 3.')
+            if menu == '0':
+                pass
+            elif menu == '1':
+                melon.classname.append('ellipsis rank01')
+                melon.classname.append('ellipsis rank02')
+                melon.set_url()
+            elif menu == '2':
+                melon.get_ranking()
+                melon.print_dic()
             else:
                 continue
-
 
 Melon.main()
 
