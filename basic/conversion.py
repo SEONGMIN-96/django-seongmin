@@ -1,29 +1,19 @@
 class Conversion(object):
-    i = 0
-    f = 0.0
-    s = ''
-    ls = []
-    t = ()
-    d = {}
-    f_ls = []
-    int_ls = []
-    hello = 'hello'
-    hello_t = ()
-    hello_ls = []
 
-    def ten_t(self):
-        self.ls = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        self.t = tuple(self.ls)
-        return self.t
+    @staticmethod
+    def ten_t() -> ():
+        tp = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        return tp
 
-    def ten_ls(self):
-        self.ls = list(self.t)
-        return self.ls
+    @staticmethod
+    def ten_ls(tp) -> []:
+        return list(tp)
 
-    def ten_f(self):
+    @staticmethod
+    def ten_f():
         for i in range(10):
-            self.f_ls.append(float(self.ls[i]))
-        return self.f_ls
+            f_ls.append(float(ls[i]))
+        return f_ls
 
     def ten_int(self):
         for i in range(10):
@@ -45,6 +35,8 @@ class Conversion(object):
 
     @staticmethod
     def main():
+        
+
         c = Conversion()
         while 1:
             m = input('0-exit 1-create tuple\n'
@@ -61,7 +53,8 @@ class Conversion(object):
                 print(c.ten_t())
             # 1번 튜플을 리스트로 전환하시오 (return)
             elif m == '2':
-                print(c.ten_ls())
+                tp = c.ten_t()
+                print(c.ten_ls(tp))
             # 2번 리스트를 실수(float) 리스트 바꾸시오  (return)
             elif m == '3':
                 print(c.ten_f())
