@@ -2,7 +2,7 @@ import pandas as pd
 
 from titanic.models.service import Service
 from titanic.models.dataset import Dataset
-from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
 
 
 class Controller(object):
@@ -36,7 +36,7 @@ class Controller(object):
 
     def submit(self, train, test):
         this = self.modeling(train, test)
-        clf = SVC()
+        clf = RandomForestClassifier()
         clf.fit(this.train, this.label)
         prediction = clf.predict(this.test)
         pd.DataFrame({'PassengerId': this.id, 'Survived': prediction}).to_csv('./data/submission.csv', index=False)
