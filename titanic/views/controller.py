@@ -1,5 +1,8 @@
+import pandas as pd
+
 from titanic.models.service import Service
 from titanic.models.dataset import Dataset
+from sklearn.svm import SVC
 
 
 class Controller(object):
@@ -8,8 +11,9 @@ class Controller(object):
     service = Service()
 
     def modeling(self, train, test) -> object:
-
         this = self.preprocess(train, test)
+        this.label = self.service.create_label(this)
+        this.train = self.service.create_train(this)
         return this
 
     def preprocess(self, train, test) -> object:
@@ -17,6 +21,7 @@ class Controller(object):
         this = self.dataset
         this.train = service.new_model(train)
         this.test = service.new_model(test)
+        this.id = this.test['PassengerId']
         this = service.embarked_nominal(this)
         this = service.title_nominal(this)
         this = service.gender_nominal(this)
@@ -25,6 +30,16 @@ class Controller(object):
         this = service.drop_feature(this, 'Sex', 'Name', 'Fare', 'Ticket', 'Cabin')
         self.print_this(this)
         return this
+
+    def learning(self, this):
+        print(f'사이킷런의 SVC 알고리즘 정확도 {self.service.accuracy_by_svm(this)} %')
+
+    def submit(self, train, test):
+        this = self.modeling(train, test)
+        clf = SVC()
+        clf.fit(this.train, this.label)
+        prediction = clf.predict(this.test)
+        pd.DataFrame({'PassengerId': this.id, 'Survived': prediction}).to_csv('./data/submission.csv', index=False)
 
     @staticmethod
     def print_this(this):

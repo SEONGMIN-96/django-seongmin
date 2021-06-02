@@ -1,12 +1,16 @@
 from titanic.models.dataset import Dataset
 import pandas as pd
 import numpy as np
+from sklearn.svm import SVC
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier
 
 class Service(object):
 
     dataset = Dataset()
 
-    def new_model(self, payload):
+    def new_model(self, payload) -> object:
         this = self.dataset
         this.context = './data/'
         this.fname = payload
@@ -17,8 +21,8 @@ class Service(object):
         return this.train.drop('Survived', axis=1)
 
     @staticmethod
-    def create_test(this) -> object:
-        return this.train('Survived')
+    def create_label(this) -> object:
+        return this.train['Survived']
 
     @staticmethod
     def drop_feature(this, *feature) -> object:
@@ -87,5 +91,17 @@ class Service(object):
         return this
 
     @staticmethod
-    def create_k_fold(this) -> object:
-        return this
+    def create_k_fold() -> object:
+        return KFold(n_splits=10, shuffle=True, random_state=0)
+
+    @staticmethod
+    def accuracy_by_svm(this):
+        score = cross_val_score(RandomForestClassifier(),
+                                this.train,
+                                this.label,
+                                cv=KFold(n_splits=10,
+                                         shuffle=True,
+                                         random_state=0),
+                                n_jobs=1,
+                                scoring='accuracy')
+        return round(np.mean(score) * 100, 2)
