@@ -1,2 +1,0 @@
-class NaverStockSamsung(object):
-    url = ''
